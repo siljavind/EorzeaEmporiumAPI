@@ -3,8 +3,7 @@ package dk.tec.eorzeaemporiumapi;
 import dk.tec.eorzeaemporiumapi.models.Product;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -14,13 +13,15 @@ import java.net.URI;
 @RequestMapping("/products")
 public class EorzeaEmporiumController {
 
-    EorzeaEmporiumRepository repo;
+    private final EorzeaEmporiumRepository repo;
 
-    EorzeaEmporiumController(EorzeaEmporiumRepository repo) { this.repo = repo; }
+    EorzeaEmporiumController(EorzeaEmporiumRepository repo) {
+        this.repo = repo;
+    }
 
-    @GetMapping()
-    Iterable<Product> getAll() {
-        return repo.findAll();
+    @GetMapping
+    ResponseEntity<Iterable<Product>> getAll() {
+        return ResponseEntity.ok(repo.findAll());
     }
 
     @GetMapping("/{id}")
@@ -30,29 +31,34 @@ public class EorzeaEmporiumController {
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @PostMapping()
-    ResponseEntity<String> create(@Valid @RequestBody Product product) {
-        try {
-            Product savedProduct = repo.save(product);
-            URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                    .path("/{id}")
-                    .buildAndExpand(savedProduct.getId())
-                    .toUri();
-
-            return ResponseEntity.created(location).body("Product created successfully");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating Product");
-        }
+    @PostMapping
+    ResponseEntity<Product> create(@Valid @RequestBody Product product) {
+        Product savedProduct = repo.save(product);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(savedProduct.getId())
+                .toUri();
+        return ResponseEntity.created(location).body(savedProduct);
     }
 
+    //TODO Add check if path variable id is the same as product id (if providing id in body)
     @PutMapping("/{id}")
     ResponseEntity<Product> update(@PathVariable int id, @Valid @RequestBody Product product) {
         return repo.findById(id)
                 .map(existingProduct -> {
-                    if (product.getId() != id) return new ResponseEntity<Product>(HttpStatus.BAD_REQUEST);
                     BeanUtils.copyProperties(product, existingProduct, "id");
                     return ResponseEntity.ok(repo.save(existingProduct));
                 })
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @DeleteMapping("/{id}")
+    ResponseEntity<String> delete(@PathVariable int id) {
+        return repo.findById(id)
+                .map(product -> {
+                    repo.delete(product);
+                    return ResponseEntity.ok("Product deleted successfully");
+                })
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product not found"));
     }
 }
