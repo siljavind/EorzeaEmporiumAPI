@@ -26,6 +26,9 @@ public class Product {
 
     @PositiveOrZero
     int stock;
+
+    @NotNull
+    Category category;
 //    boolean isAvailable;
 //    boolean isCraftable;
 //    boolean isGatherable;

@@ -1,6 +1,7 @@
-package dk.tec.eorzeaemporiumapi;
+package dk.tec.eorzeaemporiumapi.controllers;
 
 import dk.tec.eorzeaemporiumapi.models.Product;
+import dk.tec.eorzeaemporiumapi.repositories.ProductRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.*;
@@ -11,11 +12,11 @@ import java.net.URI;
 
 @RestController
 @RequestMapping("/products")
-public class EorzeaEmporiumController {
+public class ProductController {
 
-    private final EorzeaEmporiumRepository repo;
+    private final ProductRepository repo;
 
-    EorzeaEmporiumController(EorzeaEmporiumRepository repo) {
+    ProductController(ProductRepository repo) {
         this.repo = repo;
     }
 
