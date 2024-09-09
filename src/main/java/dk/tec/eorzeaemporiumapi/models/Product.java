@@ -21,8 +21,12 @@ public class Product {
     @PositiveOrZero
     float price;
 
-    @NotNull
-    String imagePath;
+//    @NotNull
+//    String imagePath;
+
+    @Lob
+    @Column(name = "image", columnDefinition = "BLOB")
+    byte[] image;
 
     @PositiveOrZero
     int stock;
