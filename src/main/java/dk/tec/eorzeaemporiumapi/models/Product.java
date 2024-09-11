@@ -25,7 +25,6 @@ public class Product {
 //    String imagePath;
 
     @Lob
-    @Column(name = "image", columnDefinition = "BLOB")
     byte[] image;
 
     @PositiveOrZero
