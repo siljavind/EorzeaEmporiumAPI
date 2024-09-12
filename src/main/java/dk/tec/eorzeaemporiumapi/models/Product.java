@@ -19,10 +19,7 @@ public class Product {
     String description;
 
     @PositiveOrZero
-    float price;
-
-//    @NotNull
-//    String imagePath;
+    int price;
 
     @Lob
     byte[] image;
@@ -31,6 +28,7 @@ public class Product {
     int stock;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
     Category category;
 //    boolean isAvailable;
 //    boolean isCraftable;
