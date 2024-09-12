@@ -16,6 +16,7 @@ public class Product {
     String name;
 
     @NotNull
+    @Lob
     String description;
 
     @PositiveOrZero
@@ -28,7 +29,6 @@ public class Product {
     int stock;
 
     @NotNull
-    @Enumerated(EnumType.STRING)
     Category category;
 //    boolean isAvailable;
 //    boolean isCraftable;
