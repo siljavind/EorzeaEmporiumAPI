@@ -6,6 +6,7 @@ import dk.tec.eorzeaemporiumapi.repositories.ProductRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.*;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -55,16 +56,17 @@ public class ProductController {
     }
 
     //TODO Add check if path variable id is the same as product id (if providing id in body)
-    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "/{id}")
     ResponseEntity<Product> update(@PathVariable int id, @Valid @RequestBody Product product) {
         return repo.findById(id)
                 .map(existingProduct -> {
                     try {
-                        BeanUtils.copyProperties(product, existingProduct, "id");
+                        BeanUtils.copyProperties(product, existingProduct, "id, image");
                         return ResponseEntity.ok(repo.save(existingProduct));
                     } catch (Exception e) {
                         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(existingProduct);
                     }
+
                 })
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
